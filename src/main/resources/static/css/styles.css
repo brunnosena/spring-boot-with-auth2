@@ -20,12 +20,25 @@ button {
     color: #FFF;
 }
 
-.lead .button-login:hover, .lead .button-login:active {
+.lead .button-login:hover,
+.lead .button-login:active,
+.lead .button-login:visited
+.lead .button-login:link {
     text-decoration: none;
 }
 
 .lead .button-login strong {
     margin-left: 8px;
+}
+
+.head {
+    display: flex;
+    align-items: center;
+}
+
+.head img {
+    width: 72px;
+    height: 72px;
 }
 
 .card {
