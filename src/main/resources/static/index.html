@@ -1,68 +1,112 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Spring Boot and Auth2.0</title>
-	<meta name="description" content=""/>
-	<base href="/"/>
-	<link rel="icon" href="/favicon.png" />
-	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
-	<script type="text/javascript" src="/webjars/jquery/3.6.0/jquery.min.js"></script>
-	<script type="text/javascript" src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-   	<script src="/webjars/js-cookie/2.2.1/js.cookie.js"></script>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Spring Boot and Auth2.0</title>
+	<meta name="description" content="" />
+	<base href="/" />
+
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400&display=swap" rel="stylesheet">
+	<link
+			rel="stylesheet"
+			href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css"
+	/>
+	<link type="text/css" href="/css/styles.css" rel="stylesheet" />
+	<link
+			href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+			rel="stylesheet"
+	/>
+	<script
+			type="text/javascript"
+			src="/webjars/jquery/3.6.0/jquery.min.js"
+	></script>
+	<script
+			type="text/javascript"
+			src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"
+	></script>
+	<script src="/webjars/js-cookie/2.2.1/js.cookie.js"></script>
 </head>
 <body>
-	<div class="container">
-		<div class="jumbotron">
-			<h1>Spring Boot and Auth2.0</h1>
-			<p class="lead">Test application made with Java 11, Spring Boot, Auth2.0</p>
-		</div>
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="unauthenticated">
-					<p class="lead"><strong>Login with GitHub:</strong> <a href="/oauth2/authorization/github">click here</a></p>
-				</div>
-				<div class="authenticated" style="display:none">
-					<div class="col-md-6">
-						<p class="lead"><strong>Logged in as:</strong> <span id="user"></span></p>
+<div class="container">
+	<div class="jumbotron">
+		<h1>Spring Boot and Auth2.0</h1>
+		<p class="lead">
+			Test application made with Java 11, Spring Boot, Auth2.0
+		</p>
+	</div>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="unauthenticated">
+				<p class="lead">
+					<a class="button-login" href="/oauth2/authorization/github">
+						<i class="fa fa-github fa-2x"></i>
+						<strong>Login with GitHub</strong>
+					</a>
+				</p>
+			</div>
+			<div class="authenticated" style="display: none">
+				<div class="card hovercard">
+					<div class="cardheader"></div>
+					<div class="avatar">
+						<img alt="avatar" src="/favicon.png" />
 					</div>
-					<div class="col-md-6">
-						<button onClick="logout()" class="btn btn-primary">Logout</button>
+					<div class="info">
+						<div class="title">
+							<p></p>
+							<button onClick="logout()" class="btn btn-danger">
+								<i class="fa fa-power-off"></i>
+							</button>
+						</div>
+						<div class="login"></div>
+						<div class="email"></div>
+						<div class="bio"></div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<script type="text/javascript">
-    	$.get("/user", function(data) {
-			console.log(data);
-	        $("#user").html(data.name);
-	        $(".unauthenticated").hide()
-	        $(".authenticated").show()
-	    });
-	    var logout = function() {
-		    $.post("/logout", function() {
-		        $("#user").html('');
-		        $(".unauthenticated").show();
-		        $(".authenticated").hide();
-		    })
-		    return true;
-		}    
-		$.ajaxSetup({
-		  beforeSend : function(xhr, settings) {
-		    if (settings.type == 'POST' || settings.type == 'PUT'
-		        || settings.type == 'DELETE') {
-		      if (!(/^http:.*/.test(settings.url) || /^https:.*/
-		        .test(settings.url))) {
-		        // Only send the token to relative URLs i.e. locally.
-		        xhr.setRequestHeader("X-XSRF-TOKEN",
-		          Cookies.get('XSRF-TOKEN'));
-		      }
-		    }
-		  }
+</div>
+<script type="text/javascript">
+	$.get("/user", function (data) {
+		console.log(data);
+		$("#user").html(data.name);
+
+		$(".avatar img").attr("src", data.avatarUrl);
+		$(".info .title p").text(data.name);
+
+		$(".info .login").text(data.login);
+		$(".info .email").text(data.email);
+		$(".info .bio").html("<strong>" + data.bio + "</strong>");
+
+		$(".unauthenticated").hide();
+		$(".authenticated").show();
+	});
+	var logout = function () {
+		$.post("/logout", function () {
+			$(".unauthenticated").show();
+			$(".authenticated").hide();
 		});
+		return true;
+	};
+	$.ajaxSetup({
+		beforeSend: function (xhr, settings) {
+			if (
+					settings.type == "POST" ||
+					settings.type == "PUT" ||
+					settings.type == "DELETE"
+			) {
+				if (
+						!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))
+				) {
+					// Only send the token to relative URLs i.e. locally.
+					xhr.setRequestHeader("X-XSRF-TOKEN", Cookies.get("XSRF-TOKEN"));
+				}
+			}
+		},
+	});
 </script>
 </body>
 </html>

@@ -1,13 +1,18 @@
-package com.brunnosena.pocspringauth2.user;
+package com.brunnosena.pocspringauth2.controller;
 
 import java.util.*;
 
+import com.brunnosena.pocspringauth2.contract.User;
+import org.apache.tomcat.jni.Error;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,23 +21,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController extends WebSecurityConfigurerAdapter {
 	
 	@GetMapping("/user")
-    public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
-	    System.out.println(principal);
+    public User user(@AuthenticationPrincipal OAuth2User principal) {
+	    if (principal == null) {
+	        throw new SessionAuthenticationException("fqçefjewg");
+        }
 
-        List<Character> list = new ArrayList<Character>();
-        list.add('X');
-        list.add('Y');
-        System.out.println("Initial list: "+ list);
-        List<List<Character>> list2 = Collections.singletonList(list);
+	    User user = new User();
+	    user.setName(principal.getAttribute("name"));
+        user.setAvatarUrl(principal.getAttribute("avatar_url"));
+        user.setBio(principal.getAttribute("bio"));
+        user.setEmail(principal.getAttribute("email"));
+        user.setLogin(principal.getAttribute("login"));
 
-//        ArrayList<Object> objects = Collections.singletonMap("name", principal.getAttribute("name"));
-        return Collections.singletonMap("name", principal.getAttribute("name"));
+        return user;
     }
 	
 	@Override	
     protected void configure(HttpSecurity http) throws Exception {
-    	// @formatter:off	
-		
+    	// @formatter:off
 		http
         // ... existing code here
         .csrf(c -> c
@@ -47,8 +53,7 @@ public class UserController extends WebSecurityConfigurerAdapter {
         
         http
             .authorizeRequests(a -> a
-                .antMatchers("/", "/error", "/webjars/**").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/error", "/webjars/**").permitAll()
             )
             .exceptionHandling(e -> e
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))

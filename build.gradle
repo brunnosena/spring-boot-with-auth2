@@ -7,6 +7,7 @@ plugins {
 group = 'com.brunnosena.pocspringauth2'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+ext.mapstructVersion = "1.4.1.Final"
 
 repositories {
 	mavenCentral()
@@ -14,11 +15,18 @@ repositories {
 }
 
 dependencies {
+	implementation "org.projectlombok:lombok"
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	annotationProcessor "org.projectlombok:lombok"
+	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation group: 'org.webjars', name: 'jquery', version: '3.6.0'
 	implementation group: 'org.webjars', name: 'bootstrap', version: '3.3.7'
+
 	implementation group: 'org.webjars', name: 'js-cookie', version: '2.2.1'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'

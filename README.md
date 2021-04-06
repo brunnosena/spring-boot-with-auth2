@@ -17,5 +17,5 @@ https://spring.io/guides/tutorials/spring-boot-oauth2/
  
  ### Run
  
-Run `http://127.0.0.1:8080/` and make login with your github user;
+Run `http://127.0.0.1:5657/` and make login with your github user;
  
